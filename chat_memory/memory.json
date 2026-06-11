@@ -1,0 +1,82 @@
+[
+  {
+    "role": "user",
+    "content": "hi"
+  },
+  {
+    "role": "assistant",
+    "content": "Hello! How can I help you learn more about Santosh?"
+  },
+  {
+    "role": "user",
+    "content": "tell about skills?"
+  },
+  {
+    "role": "assistant",
+    "content": "**Santosh Rawat’s skills**\n\n| Domain | Key skills |\n|--------|------------|\n| **Frontend** | HTML5, CSS (Tailwind), JavaScript, React, Next.js, GSAP (ScrollTrigger, SplitType), responsive design |\n| **Backend (basic)** | Node.js, REST APIs, authentication, admin‑dashboard integration |\n| **Programming** | Java (OOP fundamentals), R (data structures, ggplot) |\n| **AI & OCR** | LangChain, FAISS, embeddings, vector databases, OCR tools (image/PDF text extraction) |\n| **Web scraping** | Requests, BeautifulSoup, PDF & image parsing |\n| **Tools & workflow** | VS Code, GitHub, npm, Vite, Git |\n| **Languages** | Nepali, English, Hindi |\n\nThese are the skills documented in the supplied knowledge."
+  },
+  {
+    "role": "user",
+    "content": "Hi"
+  },
+  {
+    "role": "assistant",
+    "content": "Hello. How can I help you learn more about Santosh's experience, skills, or projects today?"
+  },
+  {
+    "role": "user",
+    "content": "tell me about santosh"
+  },
+  {
+    "role": "assistant",
+    "content": "Santosh Rawat is a B.Sc. IT student with experience in web development, AI-assisted applications, and OCR systems. He has worked on various projects, including Foodland, HomeSphere, and a Banking Interest Rate Extraction System. His skills include HTML, CSS, JavaScript, React, Next.js, and GSAP."
+  },
+  {
+    "role": "user",
+    "content": "what skills he have"
+  },
+  {
+    "role": "assistant",
+    "content": "Santosh has skills in:\n\n1. Frontend: HTML, CSS, JavaScript, React, Next.js, GSAP\n2. Backend (basic): Node.js, REST APIs, authentication\n3. Programming: Java, R\n4. AI & OCR: LangChain, FAISS, embeddings, vector databases, OCR tools\n5. Web scraping: Requests, BeautifulSoup, PDF & image parsing\n6. Design & animation: GSAP, ScrollTrigger, SplitType, hero animations, loaders, carousel systems\n7. Tools & workflow: VS Code, GitHub, npm, Vite, Git\n\nHe is also proficient in Nepali, English, and Hindi languages."
+  },
+  {
+    "role": "user",
+    "content": "ok bye"
+  },
+  {
+    "role": "assistant",
+    "content": "Bye."
+  },
+  {
+    "role": "user",
+    "content": "who are you?"
+  },
+  {
+    "role": "assistant",
+    "content": "I am Santosh's Personal AI Assistant."
+  },
+  {
+    "role": "user",
+    "content": "hi there"
+  },
+  {
+    "role": "assistant",
+    "content": "Hello. How can I help you learn more about Santosh's experience, skills, or projects today?"
+  },
+  {
+    "role": "user",
+    "content": "give the number"
+  },
+  {
+    "role": "assistant",
+    "content": "I don't have that information."
+  },
+  {
+    "role": "user",
+    "content": "give me his contact details?"
+  },
+  {
+    "role": "assistant",
+    "content": "Santosh Chhetri's contact details: \n+977 9864926196, \nsantoshchhetri216@gmail.com, \nNew Baneswor, Kathmandu."
+  }
+]

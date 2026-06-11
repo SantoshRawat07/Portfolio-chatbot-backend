@@ -1,0 +1,502 @@
+# Santosh Rawat - Personal Knowledge Base
+
+## Basic Information
+
+Name: Santosh Rawat
+
+Education:
+
+* B.Sc. IT Student
+* Interested in Software Development, Web Development, AI Applications, and Data Extraction
+* Participates in college internships and technical training programs
+
+Career Goals:
+
+* Become a skilled Full Stack Developer
+* Learn JavaScript deeply
+* Master React and Next.js
+* Learn backend development
+* Build real-world projects for internships and employment
+* Improve freelancing and startup opportunities
+
+---
+
+# Technical Skills
+
+## Frontend
+
+Strong Knowledge:
+
+* HTML
+* CSS
+* JavaScript
+* React
+* React Router
+* Responsive Design
+* Tailwind CSS
+* GSAP Animation
+
+Learning / Improving:
+
+* TypeScript
+* Next.js
+* React Advanced Concepts
+* API Integration
+* State Management
+
+Tools:
+
+* VS Code
+* GitHub
+* npm
+* Vite
+
+---
+
+## Backend
+
+Experience:
+
+* Node.js basics
+* REST APIs
+* Authentication systems
+* Admin Dashboard integrations
+
+Learning:
+
+* Full-stack architecture
+* Database integration
+* Production deployment
+
+---
+
+## Programming Languages
+
+### Java
+
+Practicing:
+
+* OOP
+* Classes and Objects
+* Constructors
+* Encapsulation
+* Inheritance
+* Polymorphism
+* Abstraction
+* Interfaces
+* File Handling
+
+### R Programming
+
+Practicing:
+
+* Vectors
+* Arrays
+* Matrices
+* Lists
+* Data Frames
+* ggplot
+
+Preferred format:
+
+ggplot(data, aes(x = v1, y = v2)) +
+geom_point()
+
+---
+
+# Major Projects
+
+## Foodland
+
+Food Recipe Website
+
+Features:
+
+* Recipe Listing
+* Food Categories
+* Customer Login
+* Admin Login
+* Recipe Management
+* Food Ordering
+* Dashboard
+
+Technology:
+
+* React
+* CSS
+* Authentication
+
+Status:
+
+* Planned advanced full-stack project
+
+---
+
+## News Portal
+
+Bilingual News Website
+
+Languages:
+
+* English
+* Nepali
+
+Features:
+
+* Admin Dashboard
+* News Publishing
+* Image Upload
+* Video Links
+* Timestamps
+* Language Switching
+
+Layout:
+
+* Newspaper style
+* Inspired by New York Times
+
+---
+
+## HomeSphere
+
+E-Commerce Website
+
+Features:
+
+* Navbar
+* Hero Slider
+* Categories
+* Product Filtering
+* Cart
+* Wishlist
+* Reviews
+* Admin Dashboard
+* Customer Authentication
+* API Integration
+
+Technology:
+
+* React
+* Next.js
+* Tailwind CSS
+
+---
+
+## Trek / Travel Website
+
+Features:
+
+* Package Pages
+* Gallery
+* Reviews
+* Fixed Dates
+* Booking Sections
+* Itinerary Pages
+* GSAP Animations
+
+Technology:
+
+* Next.js
+* TypeScript
+* Tailwind CSS
+
+---
+
+## Portfolio Website
+
+Interested Features:
+
+* Modern Homepage
+* Hero Section
+* Projects
+* Skills
+* Contact Form
+* GSAP Animations
+
+---
+
+# AI & OCR Projects
+
+## Banking Interest Rate Extraction System
+
+Major Research Area
+
+Goal:
+Collect loan interest rates from Nepali banks automatically.
+
+Data Sources:
+
+* Website tables
+* PDFs
+* Images
+* OCR extracted content
+
+Banks Researched:
+
+* Siddhartha Bank
+* Jyoti Bikas Bank
+* Laxmi Sunrise Bank
+* Standard Chartered Nepal
+* Other Nepali banks
+
+Methods:
+
+* BeautifulSoup
+* Requests
+* OCR
+* PDF Parsing
+* Image Extraction
+
+Challenges:
+
+* Dynamic websites
+* Interest rates in images
+* PDF downloads
+* OCR accuracy
+
+---
+
+## SastoLoan AI Chatbot
+
+Project Type:
+Banking Information Assistant
+
+Technologies:
+
+* LangChain
+* FAISS
+* Embeddings
+* Vector Database
+
+Topics Worked On:
+
+* docs.pkl
+* FAISS indexing
+* Retrieval systems
+* Chatbot integration
+
+---
+
+# Web Scraping Experience
+
+Experience:
+
+* Extracting tables
+* Extracting PDFs
+* Downloading latest interest-rate documents
+* Parsing banking websites
+* Extracting OCR data from images
+
+Libraries:
+
+* Requests
+* BeautifulSoup
+* OCR Tools
+* LangChain
+
+---
+
+# Teaching Experience
+
+Program:
+Government School Computer Education Program
+
+Teaching Topics:
+
+* Basic Computer Knowledge
+* Keyboard Skills
+* Typing Practice
+* Introduction in English
+* Basic Grammar
+* School Introduction
+
+Languages:
+
+* English
+* Nepali
+
+Student Level:
+
+* Complete Beginners
+
+Prepared:
+
+* Lesson Plans
+* Notes
+* Activities
+
+---
+
+# Design & Animation
+
+Experience:
+
+* GSAP
+* ScrollTrigger
+* SplitType
+* Hero Animations
+* Loaders
+* Carousel Systems
+
+Projects:
+
+* About Us Pages
+* Travel Websites
+* Portfolio Websites
+
+---
+
+# Learning Roadmap
+
+Current Focus:
+
+1. JavaScript Deep Understanding
+2. React Fundamentals
+3. React Hooks
+4. TypeScript
+5. Next.js
+6. API Integration
+7. Backend Development
+8. Full Stack Projects
+9. AI Applications
+10. OCR Systems
+
+---
+
+# Strengths
+
+* Fast learner
+* Project-oriented
+* Strong frontend foundation
+* Interested in AI and automation
+* Good at turning ideas into projects
+* Curious about real-world software systems
+
+---
+
+# Frequently Asked Questions
+
+## Who is Santosh?
+
+Santosh Rawat is a B.Sc. IT student focused on web development, AI-assisted applications, OCR systems, and full-stack software development.
+
+---
+
+## What projects has Santosh built?
+
+* Foodland
+* HomeSphere
+* Bilingual News Portal
+* Travel/Trek Websites
+* SastoLoan AI Chatbot
+* Portfolio Websites
+
+---
+
+## What is Santosh's experience with React?
+
+Experienced with:
+
+* Components
+* Routing
+* Responsive Design
+* Tailwind CSS
+* GSAP
+
+Currently improving:
+
+* Hooks
+* State Management
+* Advanced Patterns
+
+---
+
+## What is Santosh learning now?
+
+* Java
+* TypeScript
+* Next.js
+* Backend Development
+* AI Chatbots
+* OCR Systems
+
+---
+
+## What banking projects has Santosh worked on?
+
+* Loan Interest Rate Extraction
+* Bank Website Scraping
+* OCR-based Interest Rate Recognition
+* Banking Chatbots
+
+---
+
+## What banks has Santosh scraped?
+
+Research and extraction work includes:
+
+* Siddhartha Bank
+* Jyoti Bikas Bank
+* Laxmi Sunrise Bank
+* Standard Chartered Nepal
+* Other Nepali Banking Institutions
+
+---
+
+## What technologies does Santosh use?
+
+Frontend:
+
+* HTML
+* CSS
+* JavaScript
+* React
+* Next.js
+
+Backend:
+
+* Node.js
+
+Programming:
+
+* Java
+* R
+
+AI:
+
+* LangChain
+* FAISS
+* OCR
+
+---
+
+## What type of internship is Santosh looking for?
+
+* Frontend Developer
+* React Developer
+* Full Stack Developer
+* Software Engineering Intern
+* AI-assisted Web Development Roles
+
+---
+
+## What type of work interests Santosh?
+
+* Web Development
+* Full Stack Applications
+* AI Chatbots
+* OCR Systems
+* Banking Technology
+* Automation
+* Educational Technology
+
+---
+
+## Long-Term Goals
+
+* Become a Full Stack Developer
+* Build production-grade applications
+* Work in software companies
+* Gain internship experience
+* Develop AI-powered solutions
+* Create scalable business products

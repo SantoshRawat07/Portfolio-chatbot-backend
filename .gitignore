@@ -1,0 +1,18 @@
+﻿# Virtual Environment
+.venv/
+
+# Python Cache
+__pycache__/
+*.pyc
+
+# Environment Variables
+.env
+
+# FAISS Vector Database
+faiss_index/
+
+
+# Uploaded Files
+uploads/
+
+vector_db/
