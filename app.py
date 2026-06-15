@@ -50,6 +50,9 @@ app.add_middleware(
 # GROQ
 # --------------------------------------------------
 
+print("GROQ_API_KEY =", os.getenv("GROQ_API_KEY"))
+print("KEY EXISTS =", os.getenv("GROQ_API_KEY") is not None)
+
 client = Groq(
     api_key=os.getenv("GROQ_API_KEY")
 )
