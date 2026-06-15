@@ -4,7 +4,6 @@ from dotenv import load_dotenv
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
 from pydantic import BaseModel
 
 from groq import Groq
@@ -14,29 +13,60 @@ from memory import (
     add_message
 )
 
+from huggingface_hub import login
+
 from langchain_community.vectorstores import FAISS
 
 from langchain_huggingface import (
     HuggingFaceEmbeddings
 )
 
-# --------------------------------------------------
+# ==================================================
 # ENV
-# --------------------------------------------------
+# ==================================================
 
 load_dotenv()
 
-# --------------------------------------------------
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+HF_TOKEN = os.getenv("HF_TOKEN")
+
+print("\n==============================")
+print("Environment Check")
+print("==============================")
+
+print("GROQ KEY EXISTS:", bool(GROQ_API_KEY))
+print("HF TOKEN EXISTS:", bool(HF_TOKEN))
+
+# ==================================================
+# HUGGING FACE LOGIN
+# ==================================================
+
+if HF_TOKEN:
+    try:
+        login(token=HF_TOKEN)
+
+        print("✅ HuggingFace Login Success")
+
+    except Exception as e:
+        print(
+            f"⚠️ HuggingFace Login Failed: {e}"
+        )
+else:
+    print(
+        "⚠️ HF_TOKEN not found"
+    )
+
+# ==================================================
 # FASTAPI
-# --------------------------------------------------
+# ==================================================
 
 app = FastAPI(
     title="Personal AI Assistant"
 )
 
-# --------------------------------------------------
+# ==================================================
 # CORS
-# --------------------------------------------------
+# ==================================================
 
 app.add_middleware(
     CORSMiddleware,
@@ -46,53 +76,71 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# --------------------------------------------------
+# ==================================================
 # GROQ
-# --------------------------------------------------
+# ==================================================
 
-print("GROQ_API_KEY =", os.getenv("GROQ_API_KEY"))
-print("KEY EXISTS =", os.getenv("GROQ_API_KEY") is not None)
+if not GROQ_API_KEY:
+    raise Exception(
+        "GROQ_API_KEY not found"
+    )
 
 client = Groq(
-    api_key=os.getenv("GROQ_API_KEY")
+    api_key=GROQ_API_KEY
 )
 
-# --------------------------------------------------
+print("✅ Groq Client Ready")
+
+# ==================================================
 # EMBEDDINGS
-# --------------------------------------------------
+# ==================================================
+
+print("\nLoading Embedding Model...")
 
 embeddings = HuggingFaceEmbeddings(
     model_name="BAAI/bge-large-en-v1.5"
 )
 
-# --------------------------------------------------
-# LOAD VECTOR DB
-# --------------------------------------------------
+print("✅ Embedding Model Loaded")
 
-print("Loading Vector DB...")
+# ==================================================
+# LOAD VECTOR DB
+# ==================================================
+
+VECTOR_DB_PATH = "vector_db"
+
+print("\nLoading Vector DB...")
+
+if not os.path.exists(VECTOR_DB_PATH):
+
+    raise Exception(
+        f"Vector DB not found: {VECTOR_DB_PATH}"
+    )
 
 db = FAISS.load_local(
-    "vector_db",
+    VECTOR_DB_PATH,
     embeddings,
     allow_dangerous_deserialization=True
 )
 
 retriever = db.as_retriever(
-    search_kwargs={"k": 10}
+    search_kwargs={
+        "k": 10
+    }
 )
 
-print("Vector DB Loaded.")
+print("✅ Vector DB Loaded")
 
-# --------------------------------------------------
+# ==================================================
 # REQUEST MODEL
-# --------------------------------------------------
+# ==================================================
 
 class ChatRequest(BaseModel):
     message: str
 
-# --------------------------------------------------
-# HEALTH CHECK
-# --------------------------------------------------
+# ==================================================
+# ROOT
+# ==================================================
 
 @app.get("/")
 def home():
@@ -102,18 +150,31 @@ def home():
         "message": "Personal AI Backend Ready"
     }
 
-# --------------------------------------------------
+# ==================================================
+# HEALTH
+# ==================================================
+
+@app.get("/health")
+def health():
+
+    return {
+        "status": "ok",
+        "groq": bool(GROQ_API_KEY),
+        "hf_token": bool(HF_TOKEN)
+    }
+
+# ==================================================
 # CHAT
-# --------------------------------------------------
+# ==================================================
 
 @app.post("/chat")
 def chat(req: ChatRequest):
 
     try:
 
-        # -------------------------
+        # --------------------------------------
         # VECTOR SEARCH
-        # -------------------------
+        # --------------------------------------
 
         docs = retriever.invoke(
             req.message
@@ -124,9 +185,9 @@ def chat(req: ChatRequest):
             for doc in docs
         )
 
-        # -------------------------
+        # --------------------------------------
         # MEMORY
-        # -------------------------
+        # --------------------------------------
 
         memory = load_memory()
 
@@ -135,16 +196,16 @@ def chat(req: ChatRequest):
             for m in memory
         )
 
-        # -------------------------
+        # --------------------------------------
         # PROMPT
-        # -------------------------
+        # --------------------------------------
 
         prompt = f"""
 You are Santosh's Personal AI Assistant.
 
 Use the supplied knowledge.
 
-Previous Conversation:
+Conversation History:
 {history}
 
 Knowledge:
@@ -154,16 +215,16 @@ Question:
 {req.message}
 
 Rules:
-1. Use knowledge if available.
-2. Give short and clear answers.
+1. Use knowledge when available.
+2. Give concise answers.
 3. Do not invent facts.
 4. If information is unavailable, say:
    I don't have that information.
 """
 
-        # -------------------------
+        # --------------------------------------
         # GROQ
-        # -------------------------
+        # --------------------------------------
 
         response = client.chat.completions.create(
             model="llama-3.3-70b-versatile",
@@ -184,9 +245,9 @@ Rules:
             .content
         )
 
-        # -------------------------
+        # --------------------------------------
         # SAVE MEMORY
-        # -------------------------
+        # --------------------------------------
 
         add_message(
             "user",
@@ -204,8 +265,20 @@ Rules:
 
     except Exception as e:
 
-        print("ERROR:", e)
+        print(
+            "\n❌ CHAT ERROR:"
+        )
+
+        print(e)
 
         return {
-            "answer": f"Error: {str(e)}"
+            "answer": str(e)
         }
+
+# ==================================================
+# STARTUP LOG
+# ==================================================
+
+print("\n==============================")
+print("Backend Ready")
+print("==============================")
