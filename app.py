@@ -13,13 +13,8 @@ from memory import (
     add_message
 )
 
-from huggingface_hub import login
-
 from langchain_community.vectorstores import FAISS
-
-from langchain_huggingface import (
-    HuggingFaceEmbeddings
-)
+from langchain_huggingface import HuggingFaceEmbeddings
 
 # ==================================================
 # ENV
@@ -28,33 +23,11 @@ from langchain_huggingface import (
 load_dotenv()
 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
-HF_TOKEN = os.getenv("HF_TOKEN")
 
 print("\n==============================")
 print("Environment Check")
 print("==============================")
-
 print("GROQ KEY EXISTS:", bool(GROQ_API_KEY))
-print("HF TOKEN EXISTS:", bool(HF_TOKEN))
-
-# ==================================================
-# HUGGING FACE LOGIN
-# ==================================================
-
-if HF_TOKEN:
-    try:
-        login(token=HF_TOKEN)
-
-        print("✅ HuggingFace Login Success")
-
-    except Exception as e:
-        print(
-            f"⚠️ HuggingFace Login Failed: {e}"
-        )
-else:
-    print(
-        "⚠️ HF_TOKEN not found"
-    )
 
 # ==================================================
 # FASTAPI
@@ -81,55 +54,62 @@ app.add_middleware(
 # ==================================================
 
 if not GROQ_API_KEY:
-    raise Exception(
-        "GROQ_API_KEY not found"
-    )
+    raise Exception("GROQ_API_KEY not found")
 
-client = Groq(
-    api_key=GROQ_API_KEY
-)
+client = Groq(api_key=GROQ_API_KEY)
 
 print("✅ Groq Client Ready")
 
 # ==================================================
-# EMBEDDINGS
-# ==================================================
-
-print("\nLoading Embedding Model...")
-
-embeddings = HuggingFaceEmbeddings(
-    model_name="BAAI/bge-large-en-v1.5"
-)
-
-print("✅ Embedding Model Loaded")
-
-# ==================================================
-# LOAD VECTOR DB
+# VECTOR DB SETTINGS
 # ==================================================
 
 VECTOR_DB_PATH = "vector_db"
 
-print("\nLoading Vector DB...")
+embeddings = None
+retriever = None
 
-if not os.path.exists(VECTOR_DB_PATH):
+# ==================================================
+# LAZY LOAD VECTOR DB
+# ==================================================
 
-    raise Exception(
-        f"Vector DB not found: {VECTOR_DB_PATH}"
+def get_retriever():
+    global embeddings
+    global retriever
+
+    if retriever is not None:
+        return retriever
+
+    print("\nLoading Embeddings...")
+
+    embeddings = HuggingFaceEmbeddings(
+        model_name="BAAI/bge-small-en-v1.5"
     )
 
-db = FAISS.load_local(
-    VECTOR_DB_PATH,
-    embeddings,
-    allow_dangerous_deserialization=True
-)
+    print("✅ Embeddings Loaded")
 
-retriever = db.as_retriever(
-    search_kwargs={
-        "k": 10
-    }
-)
+    if not os.path.exists(VECTOR_DB_PATH):
+        raise Exception(
+            f"Vector DB not found: {VECTOR_DB_PATH}"
+        )
 
-print("✅ Vector DB Loaded")
+    print("Loading FAISS DB...")
+
+    db = FAISS.load_local(
+        VECTOR_DB_PATH,
+        embeddings,
+        allow_dangerous_deserialization=True
+    )
+
+    retriever = db.as_retriever(
+        search_kwargs={
+            "k": 5
+        }
+    )
+
+    print("✅ FAISS Loaded")
+
+    return retriever
 
 # ==================================================
 # REQUEST MODEL
@@ -144,7 +124,6 @@ class ChatRequest(BaseModel):
 
 @app.get("/")
 def home():
-
     return {
         "status": "running",
         "message": "Personal AI Backend Ready"
@@ -156,11 +135,9 @@ def home():
 
 @app.get("/health")
 def health():
-
     return {
         "status": "ok",
-        "groq": bool(GROQ_API_KEY),
-        "hf_token": bool(HF_TOKEN)
+        "groq": bool(GROQ_API_KEY)
     }
 
 # ==================================================
@@ -172,13 +149,13 @@ def chat(req: ChatRequest):
 
     try:
 
+        retriever = get_retriever()
+
         # --------------------------------------
         # VECTOR SEARCH
         # --------------------------------------
 
-        docs = retriever.invoke(
-            req.message
-        )
+        docs = retriever.invoke(req.message)
 
         context = "\n\n".join(
             doc.page_content
@@ -203,8 +180,6 @@ def chat(req: ChatRequest):
         prompt = f"""
 You are Santosh's Personal AI Assistant.
 
-Use the supplied knowledge.
-
 Conversation History:
 {history}
 
@@ -222,10 +197,6 @@ Rules:
    I don't have that information.
 """
 
-        # --------------------------------------
-        # GROQ
-        # --------------------------------------
-
         response = client.chat.completions.create(
             model="llama-3.3-70b-versatile",
             messages=[
@@ -235,7 +206,7 @@ Rules:
                 }
             ],
             temperature=0.3,
-            max_tokens=1500
+            max_tokens=1000
         )
 
         answer = (
@@ -244,10 +215,6 @@ Rules:
             .message
             .content
         )
-
-        # --------------------------------------
-        # SAVE MEMORY
-        # --------------------------------------
 
         add_message(
             "user",
@@ -265,11 +232,8 @@ Rules:
 
     except Exception as e:
 
-        print(
-            "\n❌ CHAT ERROR:"
-        )
-
-        print(e)
+        print("\n❌ CHAT ERROR")
+        print(str(e))
 
         return {
             "answer": str(e)
@@ -280,5 +244,5 @@ Rules:
 # ==================================================
 
 print("\n==============================")
-print("Backend Ready")
+print("Backend Started")
 print("==============================")

@@ -1,14 +1,6 @@
 [
   {
     "role": "user",
-    "content": "hi"
-  },
-  {
-    "role": "assistant",
-    "content": "Hello! How can I help you learn more about Santosh?"
-  },
-  {
-    "role": "user",
     "content": "tell about skills?"
   },
   {
@@ -78,5 +70,13 @@
   {
     "role": "assistant",
     "content": "Santosh Chhetri's contact details: \n+977 9864926196, \nsantoshchhetri216@gmail.com, \nNew Baneswor, Kathmandu."
+  },
+  {
+    "role": "user",
+    "content": "hii"
+  },
+  {
+    "role": "assistant",
+    "content": "Hello. How can I help you learn more about Santosh's experience, skills, or projects today?"
   }
 ]
