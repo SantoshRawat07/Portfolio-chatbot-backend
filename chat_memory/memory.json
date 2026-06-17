@@ -1,14 +1,6 @@
 [
   {
     "role": "user",
-    "content": "tell about skills?"
-  },
-  {
-    "role": "assistant",
-    "content": "**Santosh Rawat’s skills**\n\n| Domain | Key skills |\n|--------|------------|\n| **Frontend** | HTML5, CSS (Tailwind), JavaScript, React, Next.js, GSAP (ScrollTrigger, SplitType), responsive design |\n| **Backend (basic)** | Node.js, REST APIs, authentication, admin‑dashboard integration |\n| **Programming** | Java (OOP fundamentals), R (data structures, ggplot) |\n| **AI & OCR** | LangChain, FAISS, embeddings, vector databases, OCR tools (image/PDF text extraction) |\n| **Web scraping** | Requests, BeautifulSoup, PDF & image parsing |\n| **Tools & workflow** | VS Code, GitHub, npm, Vite, Git |\n| **Languages** | Nepali, English, Hindi |\n\nThese are the skills documented in the supplied knowledge."
-  },
-  {
-    "role": "user",
     "content": "Hi"
   },
   {
@@ -74,6 +66,14 @@
   {
     "role": "user",
     "content": "hii"
+  },
+  {
+    "role": "assistant",
+    "content": "Hello. How can I help you learn more about Santosh's experience, skills, or projects today?"
+  },
+  {
+    "role": "user",
+    "content": "hi"
   },
   {
     "role": "assistant",

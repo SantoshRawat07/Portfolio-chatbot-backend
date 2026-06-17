@@ -66,24 +66,23 @@ print("✅ Groq Client Ready")
 
 VECTOR_DB_PATH = "vector_db"
 
-embeddings = None
-retriever = None
+_embeddings = None
+_retriever = None
 
 # ==================================================
 # LAZY LOAD VECTOR DB
 # ==================================================
 
 def get_retriever():
-    global embeddings
-    global retriever
+    global _embeddings, _retriever
 
-    if retriever is not None:
-        return retriever
+    if _retriever is not None:
+        return _retriever
 
     print("\nLoading Embeddings...")
 
-    embeddings = HuggingFaceEmbeddings(
-        model_name="BAAI/bge-small-en-v1.5"
+    _embeddings = HuggingFaceEmbeddings(
+        model_name="BAAI/bge-large-en-v1.5"
     )
 
     print("✅ Embeddings Loaded")
@@ -97,19 +96,17 @@ def get_retriever():
 
     db = FAISS.load_local(
         VECTOR_DB_PATH,
-        embeddings,
+        _embeddings,
         allow_dangerous_deserialization=True
     )
 
-    retriever = db.as_retriever(
-        search_kwargs={
-            "k": 5
-        }
+    _retriever = db.as_retriever(
+        search_kwargs={"k": 5}
     )
 
     print("✅ FAISS Loaded")
 
-    return retriever
+    return _retriever
 
 # ==================================================
 # REQUEST MODEL
@@ -146,36 +143,25 @@ def health():
 
 @app.post("/chat")
 def chat(req: ChatRequest):
-
     try:
+        print("Step 1: getting retriever")
+        ret = get_retriever()
+        print(f"Step 2: retriever = {ret}")
 
-        retriever = get_retriever()
+        docs = ret.invoke(req.message)
+        print(f"Step 3: docs = {docs}")
 
-        # --------------------------------------
-        # VECTOR SEARCH
-        # --------------------------------------
-
-        docs = retriever.invoke(req.message)
-
-        context = "\n\n".join(
-            doc.page_content
-            for doc in docs
-        )
-
-        # --------------------------------------
-        # MEMORY
-        # --------------------------------------
+        context = "\n\n".join(doc.page_content for doc in docs)
+        print(f"Step 4: context length = {len(context)}")
 
         memory = load_memory()
+        print(f"Step 5: memory = {memory}")
 
         history = "\n".join(
             f"{m['role']}: {m['content']}"
             for m in memory
         )
-
-        # --------------------------------------
-        # PROMPT
-        # --------------------------------------
+        print("Step 6: history built")
 
         prompt = f"""
 You are Santosh's Personal AI Assistant.
@@ -196,49 +182,30 @@ Rules:
 4. If information is unavailable, say:
    I don't have that information.
 """
+        print("Step 7: calling Groq")
 
         response = client.chat.completions.create(
             model="llama-3.3-70b-versatile",
-            messages=[
-                {
-                    "role": "user",
-                    "content": prompt
-                }
-            ],
+            messages=[{"role": "user", "content": prompt}],
             temperature=0.3,
             max_tokens=1000
         )
+        print("Step 8: Groq responded")
 
-        answer = (
-            response
-            .choices[0]
-            .message
-            .content
-        )
+        answer = response.choices[0].message.content
+        print(f"Step 9: answer = {answer}")
 
-        add_message(
-            "user",
-            req.message
-        )
+        add_message("user", req.message)
+        add_message("assistant", answer)
 
-        add_message(
-            "assistant",
-            answer
-        )
-
-        return {
-            "answer": answer
-        }
+        return {"answer": answer}
 
     except Exception as e:
-
+        import traceback
+        error_msg = traceback.format_exc()
         print("\n❌ CHAT ERROR")
-        print(str(e))
-
-        return {
-            "answer": str(e)
-        }
-
+        print(error_msg)
+        return {"answer": f"⚠️ Server error: {error_msg}"}
 # ==================================================
 # STARTUP LOG
 # ==================================================
