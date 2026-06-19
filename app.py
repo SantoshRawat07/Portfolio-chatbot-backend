@@ -39,12 +39,14 @@ app = FastAPI(
 
 # ==================================================
 # CORS
+# FIX: was pointing to backend URL instead of frontend
+# FIX: allow_credentials must be False when allow_origins=["*"]
 # ==================================================
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=True,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -72,27 +74,17 @@ _retriever = None
 # ==================================================
 # LAZY LOAD VECTOR DB
 # ==================================================
-
 def get_retriever():
     global _embeddings, _retriever
 
-    if _retriever is not None:
+    if _retriever:
         return _retriever
 
-    print("\nLoading Embeddings...")
+    print("Loading embeddings...")
 
     _embeddings = HuggingFaceEmbeddings(
-        model_name="BAAI/bge-large-en-v1.5"
+        model_name="BAAI/bge-small-en-v1.5"
     )
-
-    print("✅ Embeddings Loaded")
-
-    if not os.path.exists(VECTOR_DB_PATH):
-        raise Exception(
-            f"Vector DB not found: {VECTOR_DB_PATH}"
-        )
-
-    print("Loading FAISS DB...")
 
     db = FAISS.load_local(
         VECTOR_DB_PATH,
@@ -100,14 +92,26 @@ def get_retriever():
         allow_dangerous_deserialization=True
     )
 
+    emb_dim = len(_embeddings.embed_query("hello"))
+
+    print(f"Embedding Dimension: {emb_dim}")
+    print(f"FAISS Dimension: {db.index.d}")
+
+    if emb_dim != db.index.d:
+        raise Exception(
+            f"FAISS dimension mismatch. "
+            f"Embedding={emb_dim}, "
+            f"Index={db.index.d}. "
+            f"Rebuild vector_db."
+        )
+
     _retriever = db.as_retriever(
         search_kwargs={"k": 5}
     )
 
-    print("✅ FAISS Loaded")
+    print("✅ Retriever Ready")
 
     return _retriever
-
 # ==================================================
 # REQUEST MODEL
 # ==================================================
@@ -144,24 +148,21 @@ def health():
 @app.post("/chat")
 def chat(req: ChatRequest):
     try:
-        print("Step 1: getting retriever")
         ret = get_retriever()
-        print(f"Step 2: retriever = {ret}")
 
         docs = ret.invoke(req.message)
-        print(f"Step 3: docs = {docs}")
 
-        context = "\n\n".join(doc.page_content for doc in docs)
-        print(f"Step 4: context length = {len(context)}")
+        context = "\n\n".join(
+            doc.page_content
+            for doc in docs
+        )
 
         memory = load_memory()
-        print(f"Step 5: memory = {memory}")
 
         history = "\n".join(
             f"{m['role']}: {m['content']}"
             for m in memory
         )
-        print("Step 6: history built")
 
         prompt = f"""
 You are Santosh's Personal AI Assistant.
@@ -182,18 +183,25 @@ Rules:
 4. If information is unavailable, say:
    I don't have that information.
 """
-        print("Step 7: calling Groq")
 
         response = client.chat.completions.create(
             model="llama-3.3-70b-versatile",
-            messages=[{"role": "user", "content": prompt}],
+            messages=[
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ],
             temperature=0.3,
             max_tokens=1000
         )
-        print("Step 8: Groq responded")
 
-        answer = response.choices[0].message.content
-        print(f"Step 9: answer = {answer}")
+        answer = (
+            response
+            .choices[0]
+            .message
+            .content
+        )
 
         add_message("user", req.message)
         add_message("assistant", answer)
@@ -206,6 +214,7 @@ Rules:
         print("\n❌ CHAT ERROR")
         print(error_msg)
         return {"answer": f"⚠️ Server error: {error_msg}"}
+
 # ==================================================
 # STARTUP LOG
 # ==================================================

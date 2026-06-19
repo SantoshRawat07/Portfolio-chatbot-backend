@@ -1,38 +1,6 @@
 [
   {
     "role": "user",
-    "content": "Hi"
-  },
-  {
-    "role": "assistant",
-    "content": "Hello. How can I help you learn more about Santosh's experience, skills, or projects today?"
-  },
-  {
-    "role": "user",
-    "content": "tell me about santosh"
-  },
-  {
-    "role": "assistant",
-    "content": "Santosh Rawat is a B.Sc. IT student with experience in web development, AI-assisted applications, and OCR systems. He has worked on various projects, including Foodland, HomeSphere, and a Banking Interest Rate Extraction System. His skills include HTML, CSS, JavaScript, React, Next.js, and GSAP."
-  },
-  {
-    "role": "user",
-    "content": "what skills he have"
-  },
-  {
-    "role": "assistant",
-    "content": "Santosh has skills in:\n\n1. Frontend: HTML, CSS, JavaScript, React, Next.js, GSAP\n2. Backend (basic): Node.js, REST APIs, authentication\n3. Programming: Java, R\n4. AI & OCR: LangChain, FAISS, embeddings, vector databases, OCR tools\n5. Web scraping: Requests, BeautifulSoup, PDF & image parsing\n6. Design & animation: GSAP, ScrollTrigger, SplitType, hero animations, loaders, carousel systems\n7. Tools & workflow: VS Code, GitHub, npm, Vite, Git\n\nHe is also proficient in Nepali, English, and Hindi languages."
-  },
-  {
-    "role": "user",
-    "content": "ok bye"
-  },
-  {
-    "role": "assistant",
-    "content": "Bye."
-  },
-  {
-    "role": "user",
     "content": "who are you?"
   },
   {
@@ -78,5 +46,37 @@
   {
     "role": "assistant",
     "content": "Hello. How can I help you learn more about Santosh's experience, skills, or projects today?"
+  },
+  {
+    "role": "user",
+    "content": "hi"
+  },
+  {
+    "role": "assistant",
+    "content": "Hello. How can I help you learn more about Santosh's experience, skills, or projects today?"
+  },
+  {
+    "role": "user",
+    "content": "tell about skills of frontend only"
+  },
+  {
+    "role": "assistant",
+    "content": "Santosh's frontend skills include:\n\n1. HTML\n2. CSS\n3. JavaScript\n4. React\n5. Next.js\n6. GSAP \n7. Tailwind CSS"
+  },
+  {
+    "role": "user",
+    "content": "and backend"
+  },
+  {
+    "role": "assistant",
+    "content": "Santosh's frontend skills include:\n\n1. HTML\n2. CSS\n3. JavaScript\n4. React\n5. Next.js\n6. GSAP\n\nHis backend skills are basic and include:\n\n1. Node.js\n2. REST APIs\n3. Authentication systems"
+  },
+  {
+    "role": "user",
+    "content": "give his contact email"
+  },
+  {
+    "role": "assistant",
+    "content": "santoshchhetri216@gmail.com"
   }
 ]
