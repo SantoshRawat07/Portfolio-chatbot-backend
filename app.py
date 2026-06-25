@@ -24,24 +24,16 @@ load_dotenv()
 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
-print("\n==============================")
-print("Environment Check")
-print("==============================")
-print("GROQ KEY EXISTS:", bool(GROQ_API_KEY))
+if not GROQ_API_KEY:
+    raise Exception("GROQ_API_KEY not found")
+
+client = Groq(api_key=GROQ_API_KEY)
 
 # ==================================================
 # FASTAPI
 # ==================================================
 
-app = FastAPI(
-    title="Personal AI Assistant"
-)
-
-# ==================================================
-# CORS
-# FIX: was pointing to backend URL instead of frontend
-# FIX: allow_credentials must be False when allow_origins=["*"]
-# ==================================================
+app = FastAPI(title="Personal AI Assistant")
 
 app.add_middleware(
     CORSMiddleware,
@@ -52,66 +44,36 @@ app.add_middleware(
 )
 
 # ==================================================
-# GROQ
-# ==================================================
-
-if not GROQ_API_KEY:
-    raise Exception("GROQ_API_KEY not found")
-
-client = Groq(api_key=GROQ_API_KEY)
-
-print("✅ Groq Client Ready")
-
-# ==================================================
-# VECTOR DB SETTINGS
+# VECTOR DB
 # ==================================================
 
 VECTOR_DB_PATH = "vector_db"
 
-_embeddings = None
-_retriever = None
-
-# ==================================================
-# LAZY LOAD VECTOR DB
-# ==================================================
-def get_retriever():
-    global _embeddings, _retriever
-
-    if _retriever:
-        return _retriever
-
-    print("Loading embeddings...")
-
-    _embeddings = HuggingFaceEmbeddings(
-        model_name="BAAI/bge-small-en-v1.5"
+if not os.path.exists(f"{VECTOR_DB_PATH}/index.faiss"):
+    raise Exception(
+        "vector_db not found. Run ingest.py first."
     )
 
-    db = FAISS.load_local(
-        VECTOR_DB_PATH,
-        _embeddings,
-        allow_dangerous_deserialization=True
-    )
+print("Loading embeddings...")
 
-    emb_dim = len(_embeddings.embed_query("hello"))
+embeddings = HuggingFaceEmbeddings(
+    model_name="BAAI/bge-small-en-v1.5"
+)
 
-    print(f"Embedding Dimension: {emb_dim}")
-    print(f"FAISS Dimension: {db.index.d}")
+print("Loading FAISS index...")
 
-    if emb_dim != db.index.d:
-        raise Exception(
-            f"FAISS dimension mismatch. "
-            f"Embedding={emb_dim}, "
-            f"Index={db.index.d}. "
-            f"Rebuild vector_db."
-        )
+db = FAISS.load_local(
+    VECTOR_DB_PATH,
+    embeddings,
+    allow_dangerous_deserialization=True
+)
 
-    _retriever = db.as_retriever(
-        search_kwargs={"k": 5}
-    )
+retriever = db.as_retriever(
+    search_kwargs={"k": 5}
+)
 
-    print("✅ Retriever Ready")
+print("✅ Retriever Ready")
 
-    return _retriever
 # ==================================================
 # REQUEST MODEL
 # ==================================================
@@ -120,7 +82,7 @@ class ChatRequest(BaseModel):
     message: str
 
 # ==================================================
-# ROOT
+# ROUTES
 # ==================================================
 
 @app.get("/")
@@ -130,27 +92,17 @@ def home():
         "message": "Personal AI Backend Ready"
     }
 
-# ==================================================
-# HEALTH
-# ==================================================
-
 @app.get("/health")
 def health():
     return {
-        "status": "ok",
-        "groq": bool(GROQ_API_KEY)
+        "status": "ok"
     }
-
-# ==================================================
-# CHAT
-# ==================================================
 
 @app.post("/chat")
 def chat(req: ChatRequest):
     try:
-        ret = get_retriever()
 
-        docs = ret.invoke(req.message)
+        docs = retriever.invoke(req.message)
 
         context = "\n\n".join(
             doc.page_content
@@ -177,7 +129,7 @@ Question:
 {req.message}
 
 Rules:
-1. Use knowledge when available.
+1. Use retrieved knowledge.
 2. Give concise answers.
 3. Do not invent facts.
 4. If information is unavailable, say:
@@ -196,29 +148,18 @@ Rules:
             max_tokens=1000
         )
 
-        answer = (
-            response
-            .choices[0]
-            .message
-            .content
-        )
+        answer = response.choices[0].message.content
 
         add_message("user", req.message)
         add_message("assistant", answer)
 
-        return {"answer": answer}
+        return {
+            "answer": answer
+        }
 
     except Exception as e:
-        import traceback
-        error_msg = traceback.format_exc()
-        print("\n❌ CHAT ERROR")
-        print(error_msg)
-        return {"answer": f"⚠️ Server error: {error_msg}"}
+        return {
+            "answer": f"Error: {str(e)}"
+        }
 
-# ==================================================
-# STARTUP LOG
-# ==================================================
-
-print("\n==============================")
-print("Backend Started")
-print("==============================")
+print("✅ Backend Started")

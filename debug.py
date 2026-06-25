@@ -1,8 +1,6 @@
-# run this as a one-off script: check_db.py
 from langchain_community.vectorstores import FAISS
 from langchain_huggingface import HuggingFaceEmbeddings
 
-# load with the same model you're currently using
 embeddings = HuggingFaceEmbeddings(model_name="BAAI/bge-small-en-v1.5")
 db = FAISS.load_local("vector_db", embeddings, allow_dangerous_deserialization=True)
 
